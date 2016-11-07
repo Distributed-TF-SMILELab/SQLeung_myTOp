@@ -18,3 +18,8 @@ Implementation of some basic tensor operations and matrix operations in Python 3
 * Matrix Kronecker product
 * Matrix Khatri-Rao product
 * Matrix Hadamard product
+
+
+### File Explaination
+* myTOp_test.py : run it to show how to use module myTOp
+* myTOp.py : put it under your current path, and "import myTOp" before using it
