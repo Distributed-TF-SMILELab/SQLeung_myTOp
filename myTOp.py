@@ -7,6 +7,10 @@
 # @Software: PyCharm Community Edition
 """
 My own tensor operation module myTOp
+
+For more mathematical details,
+please refer to Tensor Decompositions and Applications by Tamara G. Kolda and Brett W. Bader
+
 All of n-D arguments are numpy.dnarray (n>=1)
 Functions:
     t2vec(T): Vectorize a tensor T into a column vector
@@ -14,9 +18,11 @@ Functions:
     mKron(A, B): Return the Kronecker product of matrices A and B
     mKhaR(A, B): Return the Khatri-Rao product of matrices A and B
     mHadamard(A, B): Return the Hadamard product of matrices A and B
+    t2mat(T, rdim): Return the matrix transformed from tensor T in mode-rdim,
+                   same as tenmat(T, rdims, 'fc') in MATLAB
 """
 import numpy as np
-
+import itertools as itl
 
 
 def t2vec(T):
@@ -146,3 +152,54 @@ def mHadamard(A, B):
         for c in range(J):
             prod[r,c] = A[r,c] * B[r,c]
     return prod
+
+
+
+
+class OutOfDimsError(Exception):
+    pass
+
+
+
+def t2mat(T, rdim):
+    # Return the matrix transformed from tensor T in mode-rdim
+    # For more mathematical details, please refer to Tensor Decompositions and Applications by Tamara G. Kolda and Brett W. Bader
+    """
+    Args:
+      T: np.array with shape (I_1, I_2, ...., I_N)
+      rdim: integer, indicating the rdim_th mode of tensor T (1<= rdim <= N)
+    Returns:
+      tenmat: The matrix unfolding from tensor T,
+             np.mat with shape (I_rdim, I_1*...*I_{rdim-1}*I_{rdim+1}*I_{rdim+2}*...*I_N)
+    """
+    dims = list(T.shape)
+    tdim = T.ndim    # tdim = N
+    if rdim > tdim:
+        raise OutOfDimsError("rdim is out of dimensions of tensor T")
+    elif rdim <= 0:
+        raise OutOfDimsError("rdim should be a positive integer")
+    tsize = T.size
+    vec = T.reshape((1, tsize))[0].transpose()    # vectorize tensor T
+    idxAll = itl.product(*[range(i) for i in dims])
+    idxList = []
+    for i in idxAll:
+        idxList.append(np.array(list(i)))
+    for idxRow in idxList:
+        idxRow += np.ones(tdim, dtype=int)     # make all indices >= 1
+
+    c = int(T.size/dims[rdim-1])    # number of columns of tenmat. Obviously, col = I_{rdim+1}*I_{rdim+2}*...*I_N*I_1*...*I_{rdim-1}
+    tenmat = np.mat(np.zeros( (dims[rdim-1], c) ))    # create a same size np.mat
+    Jseq = np.ones(tdim, dtype=int)
+    Iseq = np.array(dims)[:tdim-1]
+    Jseq[1:] = Iseq
+    Jseq = np.cumprod(Jseq)
+    Jseq[rdim:] = Jseq[rdim:]/dims[rdim-1]    # Jseq: J_1, J_2, ..., J_rdim, J_{rdim+1}, ..., J_N
+    for i in range(tsize):
+        elem = vec[i]    # get corresponding element of indices idx from tensor
+        idx = idxList[i]
+        row = idx[rdim-1] - 1
+        tmpIdx = idx -  np.ones(tdim, dtype=int)
+        tmpIdx[rdim-1] = 0
+        col = np.cumsum(tmpIdx*Jseq)[tdim-1]
+        tenmat[row, col] = elem
+    return  tenmat
