@@ -22,8 +22,5 @@ Implementation of some basic tensor operations and matrix operations in Python 3
 
 ### File Explaination
 * myTOp_test.py : run it to show how to use module myTOp
-* myTOp.py : put it under your current path, and 
-             ```python
-             import myTOp
-             ``` 
-             before using it
+* myTOp.py : put it under your current path, and ``` import myTOp ``` before using it in *.py file
+
