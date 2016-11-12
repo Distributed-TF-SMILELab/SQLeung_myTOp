@@ -20,6 +20,7 @@ Functions:
     mHadamard(A, B): Return the Hadamard product of matrices A and B
     t2mat(T, rdim): Return the matrix transformed from tensor T in mode-rdim
     mat2t(A, rdim, dims): Return tensor T transformed from matrix A whose rows correspond to mode-rdim of tensor T
+    ttmat(T, A, rdim): Return the rdim-mode product of tensor T and matrix A
 """
 import numpy as np
 import itertools as itl
@@ -246,3 +247,32 @@ def mat2t(A, rdim, dims):
     T = vec.reshape(dims)
     return T
 
+
+
+
+def ttmat(T, A, rdim):
+    # Return the rdim-mode product of tensor T and matrix A
+    """
+    Args:
+      T: np.array with shape (I_1, I_2, ..., I_{rdim-1}, I_rdim, I_{rdim+1}, ..., I_N)
+      A: np.mat with shape (J, I_rdim)
+      rdim: integer, indicating multiplying tensor T by matrix A in mode-rdim (1<= rdim <= N)
+    Returns:
+      prodT: The rdim-mode product of tensor T and matrix A,
+             np.array with shape (I_1, I_2, ..., I_{rdim-1}, J, I_{rdim+1}, ..., I_N)
+    """
+    J, K = A.shape
+    dims = list(T.shape)
+    tdim = T.ndim
+    if rdim > tdim:
+        raise OutOfDimsError("rdim is out of dimensions of tensor T")
+    elif rdim <= 0:
+        raise OutOfDimsError("rdim should be a positive integer")
+    if K!=dims[rdim-1]:
+        raise SizeMatchError("mode-rdim of tensor T should match the column number of matrix A")
+    Tmat = t2mat(T, rdim)
+    prodmat = A * Tmat
+    newdims = dims
+    newdims[rdim-1] = J
+    prodT = mat2t(prodmat, rdim, newdims)
+    return  prodT
