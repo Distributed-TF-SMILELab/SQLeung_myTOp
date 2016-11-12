@@ -18,8 +18,8 @@ Functions:
     mKron(A, B): Return the Kronecker product of matrices A and B
     mKhaR(A, B): Return the Khatri-Rao product of matrices A and B
     mHadamard(A, B): Return the Hadamard product of matrices A and B
-    t2mat(T, rdim): Return the matrix transformed from tensor T in mode-rdim,
-                   same as tenmat(T, rdims, 'fc') in MATLAB
+    t2mat(T, rdim): Return the matrix transformed from tensor T in mode-rdim
+    mat2t(A, rdim, dims): Return tensor T transformed from matrix A whose rows correspond to mode-rdim of tensor T
 """
 import numpy as np
 import itertools as itl
@@ -169,7 +169,7 @@ def t2mat(T, rdim):
       T: np.array with shape (I_1, I_2, ...., I_N)
       rdim: integer, indicating the rdim_th mode of tensor T (1<= rdim <= N)
     Returns:
-      tenmat: The matrix unfolding from tensor T,
+      tenmat: The matrix transformed from tensor T,
              np.mat with shape (I_rdim, I_1*...*I_{rdim-1}*I_{rdim+1}*I_{rdim+2}*...*I_N)
     """
     dims = list(T.shape)
@@ -184,8 +184,6 @@ def t2mat(T, rdim):
     idxList = []
     for i in idxAll:
         idxList.append(np.array(list(i)))
-    for idxRow in idxList:
-        idxRow += np.ones(tdim, dtype=int)     # make all indices >= 1
 
     c = int(T.size/dims[rdim-1])    # number of columns of tenmat. Obviously, col = I_{rdim+1}*I_{rdim+2}*...*I_N*I_1*...*I_{rdim-1}
     tenmat = np.mat(np.zeros( (dims[rdim-1], c) ))    # create a same size np.mat
@@ -197,9 +195,54 @@ def t2mat(T, rdim):
     for i in range(tsize):
         elem = vec[i]    # get corresponding element of indices idx from tensor
         idx = idxList[i]
-        row = idx[rdim-1] - 1
-        tmpIdx = idx -  np.ones(tdim, dtype=int)
-        tmpIdx[rdim-1] = 0
-        col = np.cumsum(tmpIdx*Jseq)[tdim-1]
+        row = idx[rdim-1]
+        #tmpIdx = idx
+        #tmpIdx[rdim-1] = 0
+        idx[rdim - 1] = 0
+        #col = np.cumsum(tmpIdx*Jseq)[tdim-1]
+        col = np.cumsum(idx * Jseq)[tdim - 1]
         tenmat[row, col] = elem
     return  tenmat
+
+
+
+def mat2t(A, rdim, dims):
+    # Return tensor T transformed from matrix A whose rows correspond to mode-rdim of tensor T
+    """
+        Args:
+          A: The matrix transformed from tensor T,
+                 np.mat with shape (I_rdim, I_1*...*I_{rdim-1}*I_{rdim+1}*I_{rdim+2}*...*I_N)
+          rdim: Integer, indicating matrix A is transformed from tensor T in mode rdim (1<= rdim <= N)
+          dims: List of each dimension of tensor T
+        Returns:
+          T: The tensor transformed from matrix A, np.array with shape (I_1, I_2, ...., I_N)
+    """
+    tdim = len(dims)
+    if rdim > tdim:
+        raise OutOfDimsError("rdim is out of dimensions of tensor T")
+    elif rdim <= 0:
+        raise OutOfDimsError("rdim should be a positive integer")
+    r, c = A.shape
+    if r!=dims[rdim-1]:
+        raise SizeMatchError("the row number of A should correspond to rdim in dims")
+    tsize = int(r*c)
+    idxAll = itl.product(*[range(i) for i in dims])
+    idxList = []
+    for i in idxAll:
+        idxList.append(np.array(list(i)))
+    Jseq = np.ones(tdim, dtype=int)
+    Iseq = np.array(dims)[:tdim - 1]
+    Jseq[1:] = Iseq
+    Jseq = np.cumprod(Jseq)
+    Jseq[rdim:] = Jseq[rdim:] / dims[rdim - 1]  # Jseq: J_1, J_2, ..., J_rdim, J_{rdim+1}, ..., J_N
+    vec = np.zeros(tsize)
+    for i in range(tsize):    # map matrix A into a vector according to dims
+        idx = idxList[i]
+        row = idx[rdim - 1]
+        idx[rdim - 1] = 0
+        col = np.cumsum(idx * Jseq)[tdim - 1]
+        vec[i] = A[row, col]  # get corresponding element of indices idx from A
+
+    T = vec.reshape(dims)
+    return T
+
