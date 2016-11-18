@@ -15,6 +15,7 @@ All of n-D arguments are numpy.dnarray (n>=1)
 Functions:
     t2vec(T): Vectorize a tensor T into a column vector
     tnorm(T): Return the norm of tensor T
+    tinner(T1, T2): Return the inner product of tensor T1 and T2
     mKron(A, B): Return the Kronecker product of matrices A and B
     mKhaR(A, B): Return the Khatri-Rao product of matrices A and B
     mHadamard(A, B): Return the Hadamard product of matrices A and B
@@ -217,10 +218,7 @@ def t2mat(T, rdim):
         elem = vec[i]    # get corresponding element of indices idx from tensor
         idx = idxList[i]
         row = idx[rdim-1]
-        #tmpIdx = idx
-        #tmpIdx[rdim-1] = 0
         idx[rdim - 1] = 0
-        #col = np.cumsum(tmpIdx*Jseq)[tdim-1]
         col = np.cumsum(idx * Jseq)[tdim - 1]
         tenmat[row, col] = elem
     return  tenmat
