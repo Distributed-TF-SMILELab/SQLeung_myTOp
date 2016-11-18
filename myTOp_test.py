@@ -31,7 +31,7 @@ print("shape of vector vec : ", vec.shape, '\n')
 
 
 # calculate norm of tensor
-print("\n"*2, '='*12, "calculate norm of tensor", '='*12, "\n")
+print("\n"*2, '='*12, "Norm of tensor(over complex field)", '='*12, "\n")
 T1 = np.array([[1,2,3], [4,5,6]])
 print("show tensor T1 : \n", T1)
 normT1 = mto.tnorm(T1)
@@ -42,6 +42,16 @@ print("    normT1_2 = np.sqrt(sum(sum(T1*T1)))")
 print("\nnormT1_2 = ", np.sqrt(sum(sum(T1*T1))))
 
 
+
+
+# calculate the inner product of two tensor
+print("\n"*2, '='*12, "Inner product of two tensors(over complex field)", '='*12, "\n")
+T2 = 2*T1
+print("show tensor T1 : \n", T1)
+print("show tensor T2 : \n", T2)
+inprod = mto.tinner(T1, T2)
+print("\n-- using tinner to calculate the inner product of tensor T1 and tensor T2: \n      inprod = tinner(T1, T2)")
+print("\ninprod = ", inprod)
 
 
 # calculate Kronecker product of 2 matrices
@@ -75,8 +85,6 @@ print("prodKhaR = \n", prodKhaR)
 
 
 
-
-
 # calculate Hadamard product of 2 matrices
 print("\n"*2, '='*12, "Hadamard product of 2 matrices", "="*12, "\n")
 A3 = np.mat([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
@@ -93,50 +101,50 @@ print("prodHada = \n", prodHada)
 
 # transfer a tensor into a matrix
 print("\n"*2, '='*12, "Matricization of tensor", "="*12, "\n")
-T2 = np.array([[[1, 13], [4, 16], [7, 19], [10, 22]], [[2, 14], [5, 17], [8, 20], [11, 23]], [[3, 15], [6, 18], [9, 21], [12, 24]]])
-print("shape of matrix T2 : ", T2.shape)
-print("show tensor T2 :\n", T2)
-T2mat_1 = mto.t2mat(T2, 1)
-T2mat_2 = mto.t2mat(T2, 2)
-T2mat_3 = mto.t2mat(T2, 3)
-print("\n\n-- using t2mat to transfer the tensor T2 into matrix in mode-1: \n      T2mat_1 = t2mat(T2, 1)")
-print("\nshape of matrix T2mat_1 : ", T2mat_1.shape)
-print("show matrix T2mat_1 :\n", T2mat_1)
-print("\n\n-- using t2mat to transfer the tensor T2 into matrix in mode-2: \n      T2mat_2 = t2mat(T2, 2)")
-print("\nshape of matrix T2mat_2 : ", T2mat_2.shape)
-print("show matrix T2mat_2 :\n", T2mat_2)
-print("\n\n-- using t2mat to transfer the tensor T2 into matrix in mode-3: \n      T2mat_3 = t2mat(T2, 3)")
-print("\nshape of matrix T2mat_3 : ", T2mat_3.shape)
-print("show matrix T2mat_3 :\n", T2mat_3)
+T3 = np.array([[[1, 13], [4, 16], [7, 19], [10, 22]], [[2, 14], [5, 17], [8, 20], [11, 23]], [[3, 15], [6, 18], [9, 21], [12, 24]]])
+print("shape of matrix T3 : ", T3.shape)
+print("show tensor T3 :\n", T3)
+T3mat_1 = mto.t2mat(T3, 1)
+T3mat_2 = mto.t2mat(T3, 2)
+T3mat_3 = mto.t2mat(T3, 3)
+print("\n\n-- using t2mat to transfer the tensor T3 into matrix in mode-1: \n      T3mat_1 = t2mat(T3, 1)")
+print("\nshape of matrix T3mat_1 : ", T3mat_1.shape)
+print("show matrix T3mat_1 :\n", T3mat_1)
+print("\n\n-- using t2mat to transfer the tensor T3 into matrix in mode-2: \n      T3mat_2 = t2mat(T3, 2)")
+print("\nshape of matrix T3mat_2 : ", T3mat_2.shape)
+print("show matrix T3mat_2 :\n", T3mat_2)
+print("\n\n-- using t2mat to transfer the tensor T3 into matrix in mode-3: \n      T3mat_3 = t2mat(T3, 3)")
+print("\nshape of matrix T3mat_3 : ", T3mat_3.shape)
+print("show matrix T3mat_3 :\n", T3mat_3)
 
 
 # transfer a matrix back to a tensor
 print("\n"*2, '='*12, "Transforming matrix back to tensor", "="*12, "\n")
-print("\n\n-- using t2mat to transfer matrix Tmat_1 back to tensor T1  : \n      T2_1 = mat2t(T2mat_1, 1, [3,4,2])")
-T2_1 = mto.mat2t(T2mat_1, 1, [3,4,2])
-print("\nshape of tensor T2_1 : ", T2_1.shape)
-print("show tensor T2_1 :\n", T2_1)
-print("\nT2_1 == T2 : \n", T2_1==T2)
-print("\n\n-- using t2mat to transfer matrix Tmat_2 back to tensor T2  : \n      T2_2 = mat2t(T2mat_2, 2, [3,4,2])")
-T2_2 = mto.mat2t(T2mat_2, 2, [3,4,2])
-print("\nshape of tensor T2_2 : ", T2_2.shape)
-print("show tensor T2_2 :\n", T2_2)
-print("\nT2_2 == T2 : \n", T2_2==T2)
-print("\n\n-- using t2mat to transfer matrix Tmat_3 back to tensor T3  : \n      T2_3 = mat2t(T2mat_3, 3, [3,4,2])")
-T2_3 = mto.mat2t(T2mat_3, 3, [3,4,2])
-print("\nshape of tensor T2_3 : ", T2_3.shape)
-print("show tensor T2_3 :\n", T2_3)
-print("\nT2_3 == T2 : \n", T2_3==T2)
+print("\n\n-- using t2mat to transfer matrix T3mat_1 back to tensor T1  : \n      T3_1 = mat2t(T3mat_1, 1, [3,4,2])")
+T3_1 = mto.mat2t(T3mat_1, 1, [3,4,2])
+print("\nshape of tensor T3_1 : ", T3_1.shape)
+print("show tensor T3_1 :\n", T3_1)
+print("\nT3_1 == T3 : \n", T3_1==T3)
+print("\n\n-- using t2mat to transfer matrix T3mat_2 back to tensor T2  : \n      T3_2 = mat2t(T3mat_2, 2, [3,4,2])")
+T3_2 = mto.mat2t(T3mat_2, 2, [3,4,2])
+print("\nshape of tensor T3_2 : ", T3_2.shape)
+print("show tensor T3_2 :\n", T3_2)
+print("\nT3_2 == T3 : \n", T3_2==T3)
+print("\n\n-- using t2mat to transfer matrix T3mat_3 back to tensor T3  : \n      T3_3 = mat2t(T3mat_3, 3, [3,4,2])")
+T3_3 = mto.mat2t(T3mat_3, 3, [3,4,2])
+print("\nshape of tensor T3_3 : ", T3_3.shape)
+print("show tensor T3_3 :\n", T3_3)
+print("\nT3_3 == T3 : \n", T3_3==T3)
 
 
 # multiply a tensor in mode-n
 print("\n"*2, '='*12, "Multiplication of tensor and matrix in mode-n", "="*12, "\n")
-T3 = np.array([[[1, 13], [4, 16], [7, 19], [10, 22]], [[2, 14], [5, 17], [8, 20], [11, 23]], [[3, 15], [6, 18], [9, 21], [12, 24]]])
+T4 = np.array([[[1, 13], [4, 16], [7, 19], [10, 22]], [[2, 14], [5, 17], [8, 20], [11, 23]], [[3, 15], [6, 18], [9, 21], [12, 24]]])
 U = np.array([[1,3,5], [2,4,6]])
-print("\n\n-- using ttmat to  multiply tensor T3 with matrix U in mode 1  : \n      prodT = ttmat(T3, U, 1)")
-print("\nshape of tensor T3 : ", T3.shape)
-print("show tensor T3 :\n", T3)
-prodT = mto.ttmat(T3, U, 1)
+print("\n\n-- using ttmat to  multiply tensor T4 with matrix U in mode 1  : \n      prodT = ttmat(T4, U, 1)")
+print("\nshape of tensor T4 : ", T4.shape)
+print("show tensor T4 :\n", T4)
+prodT = mto.ttmat(T4, U, 1)
 print("\nshape of tensor prodT : ", prodT.shape)
 print("show tensor prodT :\n", prodT)
 print("\nthe first frontal slice of prodT :\n", prodT[:,:,0])
