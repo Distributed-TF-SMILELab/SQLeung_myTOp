@@ -26,6 +26,23 @@ import numpy as np
 import itertools as itl
 
 
+class NotMatError(Exception):
+    pass
+
+
+class SizeMatchError(Exception):
+    pass
+
+
+class ColumnMatchError(Exception):
+    pass
+
+
+class OutOfDimsError(Exception):
+    pass
+
+
+
 def t2vec(T):
     # Vectorize a tensor T into a column vector
     """
@@ -50,15 +67,28 @@ def tnorm(T):
     Returns:
       norm: The norm of tensor T, a scalar (float)
     """
-    vec = t2vec(T)
-    norm = np.sqrt(sum(vec*vec))
+    vec = np.mat(t2vec(T)).T
+    norm = (vec.H*vec)[0,0]
     return norm
 
 
 
+def tinner(T1, T2):
+    # Return the inner product of tensor T1 and T2
+    """
+    Args:
+      T1: Tensor, n-dimension data, numpy.array with shape of (I_1, I_2, ..., I_N), over C
+      T2: Tensor, n-dimension data, numpy.array with shape of (I_1, I_2, ..., I_N), over C
+    Returns:
+      inprod: The inner product of tensor T1 and T2, a scalar
+    """
+    if T1.shape != T1.shape:
+        raise SizeMatchError("tensor T1 should have same shape of tensor T2")
+    vec1 = np.mat(t2vec(T1)).T
+    vec2 = np.mat(t2vec(T2)).T
+    inprod = (vec1.H * vec2)[0,0]
+    return inprod
 
-class NotMatError(Exception):
-    pass
 
 
 
@@ -88,10 +118,6 @@ def mKron(A, B):
     return prod
 
 
-
-
-class ColumnMatchError(Exception):
-    pass
 
 
 
@@ -129,10 +155,6 @@ def mKhaR(A, B):
 
 
 
-class SizeMatchError(Exception):
-    pass
-
-
 
 
 def mHadamard(A, B):
@@ -157,8 +179,6 @@ def mHadamard(A, B):
 
 
 
-class OutOfDimsError(Exception):
-    pass
 
 
 
