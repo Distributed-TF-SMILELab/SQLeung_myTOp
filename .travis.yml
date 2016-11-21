@@ -1,0 +1,19 @@
+language: python
+python:
+  - "3.5"
+# command to install dependencies
+
+dist: trusty
+sudo: false
+
+install:
+  - pip install -r requirements.txt
+  - pip install https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc2-cp35-cp35m-linux_x86_64.whl
+  - pip install coveralls
+  - pip install coverage
+# command to run tests
+script:
+  coverage run --source=src myTOp_test.py
+after_success:
+  coveralls
+Contact GitHub API Training Shop Blog About
